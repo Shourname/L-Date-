@@ -10,8 +10,10 @@ class Date
         
         void checkThis()
         {
-            if (isOurEra == false) year = (-1)*year; else year = year;
-
+            if (year == 0) year = 1;
+            if (month == 0) month = 1;
+            if (day == 0) day = 1;
+            if (year > 0) isOurEra = true; else isOurEra = false;
             while(second > 60) { minute++; second -= 60; }
             while(second < 0) { minute--; second += 60; }
             while(minute > 60) { hour++; minute -= 60; }
@@ -22,14 +24,14 @@ class Date
             while(month < 0) { year--; month += 12; }
 
             if (checkLeapThis(year)) { month_[2] = 29; } else month_[2] = 28;
-
+            if (day == 0) day = 1;
             while(day > month_[month])
             {
                 month++;
                 day -= month_[month];
                 if (month > 12) { year++; month = 1; }
             }
-            while(day <= 0)
+            while(day < 0)
             {
                 month--;
                 day += month_[month];
@@ -80,7 +82,7 @@ class Date
 
         Date& operator+=(const Date& dt)
         {
-            this->isOurEra = dt.isOurEra;
+            
             this->year += dt.year;
             this->month += dt.month;
             this->day += dt.day;
@@ -241,11 +243,17 @@ int Date::month_[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 int main()
 {
     
-    Date dateOne(false, 456, 23, 18, 89, 123, 14);
-    Date dateTwo;
-    Date dateThree;
-
+    Date d1;
     cout << "Output = [ IsOurEra (1 - OurEra; 0 - BeforeOurEra) Year Month Day Hour Minute Second ]" << endl;
-    
+    cout << d1; // (1 1960 1 1 0 0 0)
+    Date d2(true, 0, 0, 0, 0, 0, 0); // (1 1 1 1 0 0 0)
+    cout << (d1 > d2) << endl; // 1
+    cout << (d1 < d2) << endl; // 0
+    cout << (d1 == d2) << endl; // 0
+    Date d3 = d2.subtruct(100, -12, 1, 23, 59, 59); // (0 -98 1 1 0 0 1)
+    Date d4(d3 + d2 - d1);
+    Date d5(d4);
+    d4 += d5 - d4.add(10, 1, 1, 0, 0, 0);
+    cout << d3 << d4 << d5; 
     return 0;
 }
